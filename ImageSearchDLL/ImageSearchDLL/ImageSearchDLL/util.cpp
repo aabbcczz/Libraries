@@ -151,7 +151,7 @@ void strlcpy(char *aDst, const char *aSrc, size_t aDstSize) // Non-inline becaus
 	// It might be worthwhile to have a custom char-copying-loop here someday so that number of characters
 	// actually copied (not including the zero terminator) can be returned to callers who want it.
 	--aDstSize; // Convert from size to length (caller has ensured that aDstSize > 0).
-	strncpy(aDst, aSrc, aDstSize); // NOTE: In spite of its zero-filling, strncpy() benchmarks considerably faster than a custom loop, probably because it uses 32-bit memory operations vs. 8-bit.
+	strncpy_s(aDst, aDstSize, aSrc, aDstSize); // NOTE: In spite of its zero-filling, strncpy() benchmarks considerably faster than a custom loop, probably because it uses 32-bit memory operations vs. 8-bit.
 	aDst[aDstSize] = '\0';
 }
 

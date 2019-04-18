@@ -3,3 +3,10 @@
 ################################################################################
 
 *.suo
+/.vs
+/ImageSearchDLL/ImageSearchDLL/.vs/ImageSearchDLL/v15
+/ImageSearchDLL/ImageSearchDLL/ImageSearchDLL/Release
+/ImageSearchDLL/ImageSearchDLL/Release
+/ImageSearchDLL/ImageSearchDLL/ImageSearchDLL/ImageSearchDLL.vcxproj.user
+/ImageSearchDLL/ImageSearchDLL/ImageSearchDLL/ImageSearchDLL.vcxproj.filters
+/ImageSearchDLL/ImageSearchDLL/UpgradeLog.htm
