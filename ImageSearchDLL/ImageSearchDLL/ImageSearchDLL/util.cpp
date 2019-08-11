@@ -762,6 +762,7 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 	COLORREF trans_color = CLR_NONE; // The default must be a value that can't occur naturally in an image.
 	int icon_number = 0; // Zero means "load icon or bitmap (doesn't matter)".
 	int width = 0, height = 0;
+	int max_unmatched = 0;
 	// For icons, override the default to be 16x16 because that is what is sought 99% of the time.
 	// This new default can be overridden by explicitly specifying w0 h0:
 	char *cp = strrchr(aImageFile, '.');
@@ -781,6 +782,7 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 		{
 		case 'W': width = ATOI(cp + 1); break;
 		case 'H': height = ATOI(cp + 1); break;
+		case 'U': max_unmatched = ATOI(cp + 1); break;
 		default:
 			if (!_strnicmp(cp, "Icon", 4))
 			{
@@ -979,14 +981,24 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 				&& image_height <= screen_height - i/screen_width // Image is short enough to fit in the remaining rows of the search region.
 				&& image_width <= screen_width - i%screen_width)  // Image is narrow enough not to exceed the right-side boundary of the search region.
 			{
+				int unmatched = 0;
+
 				// Check if this candidate region -- which is a subset of the search region whose height and width
 				// matches that of the image -- is a pixel-for-pixel match of the image.
 				for (found = true, x = 0, y = 0, j = 0, k = i; j < image_pixel_count; ++j)
 				{
-					if (!(found = (screen_pixel[k] == image_pixel[j] // At least one pixel doesn't match, so this candidate is discarded.
+					if (!(screen_pixel[k] == image_pixel[j] // At least one pixel doesn't match, so this candidate is discarded.
 						|| image_mask && image_mask[j]      // Or: It's an icon's transparent pixel, which matches any color.
-						|| image_pixel[j] == trans_color))) // This should be okay even if trans_color==CLR_NONE, since CLR none should never occur naturally in the image.
-						break;
+						|| image_pixel[j] == trans_color)) // This should be okay even if trans_color==CLR_NONE, since CLR none should never occur naturally in the image.
+					{
+						unmatched++;
+						if (unmatched > max_unmatched)
+						{
+							found = false;
+							break;
+						}
+					}
+
 					if (++x < image_width) // We're still within the same row of the image, so just move on to the next screen pixel.
 						++k;
 					else // We're starting a new row of the image.
@@ -1048,6 +1060,8 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 			if (image_height <= screen_height - i/screen_width    // Image is short enough to fit in the remaining rows of the search region.
 				&& image_width <= screen_width - i%screen_width)  // Image is narrow enough not to exceed the right-side boundary of the search region.
 			{
+				int unmatched = 0;
+
 				// Since the first pixel is a match, check the other pixels.
 				for (found = true, x = 0, y = 0, j = 0, k = i; j < image_pixel_count; ++j)
 				{
@@ -1059,12 +1073,20 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 	   				green = GetGValue(screen_pixel[k]);
 		   			blue = GetRValue(screen_pixel[k]);
 
-					if (!(found = red >= red_low && red <= red_high
+					if (!(red >= red_low && red <= red_high
 						&& green >= green_low && green <= green_high
-                        && blue >= blue_low && blue <= blue_high
-							|| image_mask && image_mask[j]     // Or: It's an icon's transparent pixel, which matches any color.
-							|| image_pixel[j] == trans_color)) // This should be okay even if trans_color==CLR_NONE, since CLR_NONE should never occur naturally in the image.
-						break; // At least one pixel doesn't match, so this candidate is discarded.
+						&& blue >= blue_low && blue <= blue_high
+						|| image_mask && image_mask[j]     // Or: It's an icon's transparent pixel, which matches any color.
+						|| image_pixel[j] == trans_color)) // This should be okay even if trans_color==CLR_NONE, since CLR_NONE should never occur naturally in the image.
+					{
+						unmatched++;
+						if (unmatched > max_unmatched)
+						{
+							found = false;
+							break; // At least one pixel doesn't match, so this candidate is discarded.
+						}
+					}
+
 					if (++x < image_width) // We're still within the same row of the image, so just move on to the next screen pixel.
 						++k;
 					else // We're starting a new row of the image.
