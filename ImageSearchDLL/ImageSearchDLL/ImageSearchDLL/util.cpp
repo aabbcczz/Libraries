@@ -763,6 +763,8 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 	int icon_number = 0; // Zero means "load icon or bitmap (doesn't matter)".
 	int width = 0, height = 0;
 	int max_unmatched = 0;
+	bool force_bw = false;
+
 	// For icons, override the default to be 16x16 because that is what is sought 99% of the time.
 	// This new default can be overridden by explicitly specifying w0 h0:
 	char *cp = strrchr(aImageFile, '.');
@@ -783,6 +785,7 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 		case 'W': width = ATOI(cp + 1); break;
 		case 'H': height = ATOI(cp + 1); break;
 		case 'U': max_unmatched = ATOI(cp + 1); break;
+		case 'B': force_bw = true; break;
 		default:
 			if (!_strnicmp(cp, "Icon", 4))
 			{
@@ -830,6 +833,12 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 		aImageFile = ++cp; // This should now point to another asterisk or the filename itself.
 		// Above also serves to reset the filename to omit the option string whenever at least one asterisk-option is present.
 		cp = omit_leading_whitespace(cp); // This is done to make it more tolerant of having more than one space/tab between options.
+	}
+
+	// in force black or white mode, aVariation must be set to 0
+	if (force_bw)
+	{
+		aVariation = 0;
 	}
 
 	// Update: Transparency is now supported in icons by using the icon's mask.  In addition, an attempt
@@ -945,7 +954,18 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 	// Without this change, there are cases where variation=0 would find a match but a higher variation
 	// (for the same search) wouldn't. 
 	for (i = 0; i < image_pixel_count; ++i)
+	{
 		image_pixel[i] &= 0x00FFFFFF;
+		
+		if (force_bw)
+		{
+			COLORREF color = image_pixel[i];
+
+			DWORD y = (DWORD)(0.299 * GetRValue(color) + 0.587 * GetGValue(color) + 0.114 * GetBValue(color));
+
+			image_pixel[i] = (y < 128) ? 0x0 : 0x00FFFFFF;
+		}
+	}
 
 	// Search the specified region for the first occurrence of the image:
 	if (aVariation < 1) // Caller wants an exact match.
@@ -962,7 +982,17 @@ char* WINAPI ImageSearch(int aLeft, int aTop, int aRight, int aBottom, char *aIm
 		// ignoring the high-order byte -- maybe a much higher variation would be needed if the high
 		// order byte were also subject to the same shades-of-variation analysis as the other three bytes [RGB]).
 		for (i = 0; i < screen_pixel_count; ++i)
+		{
 			screen_pixel[i] &= 0x00FFFFFF;
+			if (force_bw)
+			{
+				COLORREF color = screen_pixel[i];
+
+				DWORD y = (DWORD)(0.299 * GetRValue(color) + 0.587 * GetGValue(color) + 0.114 * GetBValue(color));
+
+				screen_pixel[i] = (y < 128) ? 0x0 : 0x00FFFFFF;
+			}
+		}
 
 		for (i = 0; i < screen_pixel_count; ++i)
 		{
