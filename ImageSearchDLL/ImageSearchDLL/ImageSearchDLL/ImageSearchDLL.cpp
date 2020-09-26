@@ -28,8 +28,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 void _tmain()
 {
 	int z;
-	HBITMAP hbmp = LoadPicture("c:\\pic.bmp",0,0,z,0,0);
+	HBITMAP hbmp = LoadPictureFromFile("c:\\pic.bmp",0,0,z,0,0);
 	char *answer="";
-	answer = ImageSearch(0,0,1024,768,"c:\\pic.bmp");
+	answer = ImageSearchHandle(hbmp, "*U10 *V16", 0,0,1024,768);
 	return;
 }

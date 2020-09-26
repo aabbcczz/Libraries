@@ -2,6 +2,9 @@ LIBRARY	"ImageSearchDLL"
 
 EXPORTS
 
-	ImageSearch
+	LoadPictureFromFile
+	LoadPictureFromHandle
+	BitmapHash
 	ImageTest
-	
+	ImageSearchFile
+	ImageSearchHandle

@@ -5,16 +5,22 @@ VisualStudioVersion = 15.0.28307.438
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageSearchDLL", "ImageSearchDLL\ImageSearchDLL.vcxproj", "{665FCE36-CFC7-4E16-A978-72E983DE24E5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageSearchTest", "ImageSearchTest\ImageSearchTest.vcxproj", "{084DF755-656A-448C-BD9F-56F1B1B0B5A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{665FCE36-CFC7-4E16-A978-72E983DE24E5}.Debug|Win32.ActiveCfg = Release|Win32
-		{665FCE36-CFC7-4E16-A978-72E983DE24E5}.Debug|Win32.Build.0 = Release|Win32
+		{665FCE36-CFC7-4E16-A978-72E983DE24E5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{665FCE36-CFC7-4E16-A978-72E983DE24E5}.Debug|Win32.Build.0 = Debug|Win32
 		{665FCE36-CFC7-4E16-A978-72E983DE24E5}.Release|Win32.ActiveCfg = Release|Win32
 		{665FCE36-CFC7-4E16-A978-72E983DE24E5}.Release|Win32.Build.0 = Release|Win32
+		{084DF755-656A-448C-BD9F-56F1B1B0B5A7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{084DF755-656A-448C-BD9F-56F1B1B0B5A7}.Debug|Win32.Build.0 = Debug|Win32
+		{084DF755-656A-448C-BD9F-56F1B1B0B5A7}.Release|Win32.ActiveCfg = Release|Win32
+		{084DF755-656A-448C-BD9F-56F1B1B0B5A7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
